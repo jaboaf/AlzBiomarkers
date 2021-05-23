@@ -1,4 +1,4 @@
-#Base.include(Main,"SymGroupAndReps.jl")
+Base.include(Main,"SymGrpAndReps.jl")
 using GRUtils
 using StatsBase
 using Statistics
@@ -43,8 +43,8 @@ end
 for r in sRIDs DX[r] = unique(DX[r]) end
 
 # 3=AD,2=MCI,1=NL
-#G = zeros((3,4,372,103));
-#Gr = zeros((3,4,134));
+G = zeros((3,4,372,103));
+Gr = zeros((3,4,134));
 D = zeros((2,2,2,4,372,103));
 Dr = zeros((2,2,2,4,134));
 for p in Samp
@@ -57,14 +57,14 @@ for p in Samp
 	for i in 1:4
 		D[e_1, e_2, e_3, i, Int(round(p[3][i])), Int(round(p[4][i])) ] += 1/4
 		Dr[e_1, e_2, e_3, i, Int(round(p[4][i]/p[3][i] *100)) ] += 1/4
-		#G[ g_k, i,Int(round(p[3][i])), Int(round(p[4][i]))] += 1/4
-		#Gr[ g_k, i,Int(round(p[4][i]/p[3][i] *100)) ] += 1/4
+		G[ g_k, i,Int(round(p[3][i])), Int(round(p[4][i]))] += 1/4
+		Gr[ g_k, i,Int(round(p[4][i]/p[3][i] *100)) ] += 1/4
 	end
 end
 D/=n;
 Dr/=n;
-#G/= n;
-#Gr/=n;
+G/= n;
+Gr/=n;
 
 d = zeros(2,2,2,3,372,103);
 dr = zeros(2,2,2,3,134);
@@ -74,7 +74,6 @@ for i in 1:3
 end
 
 F(x::Array) = [sum([x[j]*exp(-im*2*π*k*(j-1)/length(x)) for j in 1:length(x)]) for k in 1:length(x)]
-
 ⊗(A::Array{T},B::Array{T}) where T<: Number = prod.(Base.product(A,B))
 E(X::Array,i::K) where {K<:Integer} =dropdims( sum(X,dims=setdiff(1:ndims(X),i)),dims=tuple(setdiff(1:ndims(X),i)...) )
 E(X::Array,I::NTuple) =dropdims(sum(X,dims=setdiff(1:ndims(X),I)),dims=tuple(setdiff(1:ndims(X),I)...))
@@ -84,6 +83,39 @@ cov(X::Array,i::K,J::NTuple) where {K<:Integer} = E(X,(i,J...))-E(X,i)⊗E(X,J)
 cov(X::Array,I::NTuple,J::NTuple) =E(X,(I...,J...))-E(I)⊗E(J)
 
 data = (t=[p[2] for p in Samp],AB40=[p[3] for p in Samp],AB42=[p[4] for p in Samp],ABratio=[p[5] for p in Samp])
+
+U = sum([1/6 * permutedims(D,vcat(p,[4,5,6])) for p in Sym(3)]);
+A = D-U;
+
+c = E(G,1);
+G_u1 = sum([G[i,:,:,:] for i in 1:3]);
+G_a = sum([G[i,:,:,:]- c[i]*G_u1 for i in 1:3]);
+k = sum(1/2*abs.(G_a))
+1/ (1+k)
+
+Gr_u1 = sum([Gr[i,:,:] for i in 1:3]);
+Gr_a = sum([Gr[i,:,:]- c[i]*Gr_u1 for i in 1:3]);
+k_r = sum(1/2*abs.(Gr_a))
+1/ (1+k_r)
+
+Alz = G[3,:,:,:];
+Alz_ut = sum([Alz[t,:,:] for t in 1:4]);
+Alz_a = sum([Alz[t,:,:] - Alz_ut for t in 1:4]);
+k_alz = sum(1/2*abs.(Alz_a))
+1/ (1+k_alz)
+
+Alzr = Gr[1,:,:];
+Alzr_ut = sum([Alzr[t,:] for t in 1:4]);
+Alzr_a = sum([Alzr[t,:] - Alzr_ut for t in 1:4]);
+k_alzr = sum(1/2*abs.(Alzr_a))
+1/ (1+k_alzr)
+
+Alz = G[3,:,:,:];
+Alz_ut = sum([Alz[t,:,:] for t in 1:4]);
+Alz_a = sum([Alz[t,:,:] - Alz_ut for t in 1:4]);
+k_alz = sum(1/2*abs.(Alz_a))
+1/ (1+k_alz)
+
 
 
 

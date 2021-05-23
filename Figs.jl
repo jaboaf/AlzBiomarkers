@@ -30,13 +30,41 @@ title("Répartition des Observations Ratios de Béta-Amyloide 42/40")
 ylabel("Nombre des Observations")
 xlabel(" βA42 / βA40 ")
 
-
+Figure()
 plot(LinRange(1,372,372),E(D,5), ylim=(0,0.1), label="βA-40")
 oplot(LinRange(1,103,103),E(D,6),label="βA-42")
-oplot(LinRange(1,103,134),E(Dr,5),label="βA-42/βA-40")
 title("Marginal Répartition de Béta-Amyloide")
 ylabel("Probabilité")
+xlabel("βA")
 legend()
+savefig("MarginalBA.png",gcf())
+
+Figure()
+plot(log.(1:372),E(D,5), ylim=(0,0.1), label="log(βA40)",hold=true)
+plot(log.(1:103),E(D,6),label="log(βA42)")
+title("Marginal Répartition de Logarithm de Béta-Amyloide")
+ylabel("Probabilité")
+xlabel("log(βA)")
+legend()
+savefig("MarginalLogBA.png",gcf())
+
+Figure()
+plot(0.01:0.01:1.34,E(Dr,5),label="r := βA42/βA40",hold=true)
+plot(exp.(-1*(0.01:0.01:1.34)) .- (0.01:0.01:1.34),E(Dr,5),label="exp(r)-r")
+plot(exp.(-1*(0.01:0.01:1.34)) .- 1,E(Dr,5),label="exp(r)-1")
+title("Marginal Répartition des Ratios de Béta-Amyloide")
+ylabel("Probabilité")
+legend()
+savefig("MarginalBAratios.png",gcf())
+
+Figure()
+plot(1:372,E(D,5) ./ 372,hold=true)
+plot(1:103,E(D,6) ./ 103 )
+title("Marginal Répartition de Logarithm de Béta-Amyloide")
+ylabel("Probabilité")
+xlabel("log(βA)")
+legend()
+savefig("MarginalLogBA.png",gcf())
 
 Figure()
 plot(E(D[:,:,2,:,:,:],4),label="AD",hold=true)
@@ -95,6 +123,16 @@ savefig("BAratiobyTime.png",gcf())
 surface(cov(Dr,3,5))
 title("Covariance ")
 surface(cov(Dr,4,5))
+
+
+plot(log.(1:372),E(G,3),hold=true, label="βA42")
+plot(log.(1:103),E(G,4), label="βA40")
+
+
+plot( 0.01:0.01:1.34,E(Gr,3), label="βA42/βA40")
+
+
+
 
 
 for t in 1:4
