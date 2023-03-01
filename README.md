@@ -42,6 +42,4 @@ Visits sont dans: 0,6,12,18,24,36,48
 
  
 
- 
-
-<https://www.ebi.ac.uk/ena/browser/api/fasta/Y00264.1?lineLimit=1000>
+Sequence: <https://www.ebi.ac.uk/ena/browser/api/fasta/Y00264.1?lineLimit=1000>
